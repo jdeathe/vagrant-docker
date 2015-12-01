@@ -42,9 +42,9 @@ Vagrant.configure("2") do |config|
     config.vm.define containers["name"] do |container|
       container.vm.synced_folder ".", "/vagrant", disabled: true
       container.ssh.username = containers["ssh_username"]
-      if !containers["ssh_password"].nil? && !containers["ssh_password"].empty?
-        container.ssh.password = containers["ssh_password"]
-      end
+      # if !containers["ssh_password"].nil? && !containers["ssh_password"].empty?
+      #   container.ssh.password = containers["ssh_password"]
+      # end
       container.ssh.port = 22
 
       container.vm.provider "docker" do |docker|
@@ -59,6 +59,11 @@ Vagrant.configure("2") do |config|
         end
         docker.has_ssh = containers["has_ssh"]
         docker.remains_running = containers["remains_running"]
+        docker.env = {
+          SSH_USER: containers["ssh_username"],
+          SSH_USER_PASSWORD: containers["ssh_password"],
+          SSH_USER_HOME_DIR: "/home/%s" % containers["ssh_username"]
+        }
       end
 
       container.vm.post_up_message = "
