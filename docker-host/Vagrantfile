@@ -94,6 +94,10 @@ Vagrant.configure("2") do |config|
       config.vm.post_up_message = "You can use the docker tool locally by setting the following env var:
   export DOCKER_HOST='tcp://127.0.0.1:%s' && unset DOCKER_TLS_VERIFY && unset DOCKER_CERT_PATH
 " % $expose_docker_tcp
+    else
+      config.vm.post_up_message = "You can use the docker tool locally by setting the following env var:
+  export DOCKER_HOST='tcp://%s:2375' && unset DOCKER_TLS_VERIFY && unset DOCKER_CERT_PATH
+" % $ip_address
     end
 
     # Configure SSH port forwarding to start at port 2200
@@ -120,8 +124,6 @@ Vagrant.configure("2") do |config|
 
     config.vm.network :private_network, ip: $ip_address
 
-    # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-    #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
     $shared_folders.each_with_index do |(host_folder, guest_folder), index|
       config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "core-share%02d" % index, nfs: true, mount_options: ['nolock,vers=3,udp']
     end
