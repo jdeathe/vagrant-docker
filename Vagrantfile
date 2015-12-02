@@ -6,24 +6,6 @@ require 'yaml'
 
 Vagrant.require_version ">= 1.6.0"
 ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
-ENV['VAGRANT_NO_PARALLEL'] = "yes"
-
-if !Vagrant::Util::Platform.windows?
-  unless Vagrant.has_plugin?("vagrant-hostsupdater")
-
-puts <<-EOT
-================================================================================
-The recommended plugin vagrant-hostsupdater is not installed. This will assist 
-setting up /etc/hosts entries for the guest VMs.
-
-To install run:
-vagrant plugin install vagrant-hostsupdater
---------------------------------------------------------------------------------
-
-EOT
-
-  end
-end
 
 $containers_config_file = File.expand_path("./containers.yml", File.dirname(__FILE__))
 $docker_host_vm_vagrantfile = File.expand_path("./docker-host/Vagrantfile", File.dirname(__FILE__))
@@ -41,11 +23,11 @@ Vagrant.configure("2") do |config|
   YAML.load_file($containers_config_file).each do |containers|
     config.vm.define containers["name"] do |container|
       container.vm.synced_folder ".", "/vagrant", disabled: true
+      container.ssh.port = 22
       container.ssh.username = containers["ssh_username"]
       # if !containers["ssh_password"].nil? && !containers["ssh_password"].empty?
       #   container.ssh.password = containers["ssh_password"]
       # end
-      container.ssh.port = 22
 
       container.vm.provider "docker" do |docker|
         docker.force_host_vm = true
@@ -73,6 +55,5 @@ Usage:
 " % [containers["name"], containers["name"]]
 
     end
-
   end
 end

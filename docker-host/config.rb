@@ -90,4 +90,4 @@ $shared_folders = {'./config' => '/etc/services-config'}
 #$forwarded_ports = {}
 
 # IP address of guest machine.
-$ip_address = "172.16.8.100"
+$ip_address = "192.168.98.100"
