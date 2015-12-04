@@ -50,7 +50,7 @@ $instance_name_prefix="core"
 # For example, to deploy version 709.0.0, set $image_version="709.0.0".
 # The default value is "current", which points to the current version
 # of the selected channel
-$image_version = "current"
+$image_version = "884.0.0"
 
 # Official CoreOS channel from which updates should be downloaded
 $update_channel='alpha'
