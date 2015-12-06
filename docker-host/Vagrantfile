@@ -42,10 +42,10 @@ end
 Vagrant.configure("2") do |config|
   config.vm.box = "coreos-%s" % $update_channel
   if $image_version != "current"
-      if image_version_minimum_required != true
+      if $image_version_minimum_required != true
         config.vm.box_version = $image_version
       else
-        config.vm.box_version >= $image_version
+        config.vm.box_version = ">= %s" % $image_version
       end
   end
   config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/%s/coreos_production_vagrant.json" % [$update_channel, $image_version]
