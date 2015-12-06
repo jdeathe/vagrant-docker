@@ -52,6 +52,8 @@ $instance_name_prefix="core"
 # of the selected channel
 $image_version = "884.0.0"
 
+$image_version_minimum_required = true
+
 # Official CoreOS channel from which updates should be downloaded
 $update_channel='alpha'
 
