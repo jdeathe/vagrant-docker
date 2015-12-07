@@ -3,7 +3,7 @@
 ---
 coreos:
   update:
-    reboot-strategy: off
+    reboot-strategy: 'off'
   units:
   - name: docker-tcp.socket
     command: start
