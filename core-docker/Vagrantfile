@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
     config.vbguest.auto_update = false
   end
 
-  config.vm.define vm_name = "%s-docker-host" % $instance_name_prefix do |config|
+  config.vm.define vm_name = "%s-docker" % $instance_name_prefix do |config|
     config.vm.hostname = vm_name
 
     if $enable_serial_logging

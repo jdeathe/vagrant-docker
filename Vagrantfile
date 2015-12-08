@@ -8,8 +8,8 @@ Vagrant.require_version ">= 1.6.0"
 ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
 
 $containers_config_file = File.expand_path("./containers.yml", File.dirname(__FILE__))
-$docker_host_vm_vagrantfile = File.expand_path("./docker-host/Vagrantfile", File.dirname(__FILE__))
-$docker_host_vm_name = "core-docker-host"
+$docker_host_vm_vagrantfile = File.expand_path("./core-docker/Vagrantfile", File.dirname(__FILE__))
+$docker_host_vm_name = "core-docker"
 
 if !File.exist?($containers_config_file)
   abort("Cannot find path: %s" % $containers_config_file)
