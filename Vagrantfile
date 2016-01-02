@@ -7,12 +7,20 @@ require 'yaml'
 Vagrant.require_version ">= 1.6.0"
 ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
 
-$containers_config_file = File.expand_path("./containers.yml", File.dirname(__FILE__))
-$docker_host_vm_vagrantfile = File.expand_path("./core-docker/Vagrantfile", File.dirname(__FILE__))
+$config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
+$containers_config_path = File.expand_path("./containers.yml", File.dirname(__FILE__))
+
+# Defalut configuration options
 $docker_host_vm_name = "core-docker"
 
-if !File.exist?($containers_config_file)
-  abort("Cannot find path: %s" % $containers_config_file)
+if File.exist?($config_path)
+  require $config_path
+end
+
+$docker_host_vm_vagrantfile = File.expand_path("./%s/Vagrantfile" % $docker_host_vm_name, File.dirname(__FILE__))
+
+if !File.exist?($containers_config_path)
+  abort("Cannot find path: %s" % $containers_config_path)
 end
 
 if !File.exist?($docker_host_vm_vagrantfile)
@@ -20,7 +28,7 @@ if !File.exist?($docker_host_vm_vagrantfile)
 end
 
 Vagrant.configure("2") do |config|
-  YAML.load_file($containers_config_file).each do |containers|
+  YAML.load_file($containers_config_path).each do |containers|
     config.vm.define containers["name"] do |container|
       container.vm.synced_folder ".", "/vagrant", disabled: true
       container.ssh.port = 22
