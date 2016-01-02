@@ -1,8 +1,7 @@
 
-$hosthame = "centos-docker"
-
+# Change the CentOS 7 version to be installed
+# Check the available versions at https://atlas.hashicorp.com/centos/boxes/7
 $image_version = "1509.01"
-
 
 # Enable port forwarding of Docker TCP socket
 # Set to the TCP port you want exposed on the *host* machine, default is 2375
@@ -17,6 +16,7 @@ $image_version = "1509.01"
 $share_home=true
 
 # Customize VMs
+$vm_name = "centos-docker"
 $vm_gui = false
 $vm_memory = 1024
 $vm_cpus = 1
