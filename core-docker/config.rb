@@ -34,16 +34,11 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 # end
 
 #
-# coreos-vagrant is configured through a series of configuration
+# coreos-docker is configured through a series of configuration
 # options (global ruby variables) which are detailed below. To modify
 # these options, first copy this file to "config.rb". Then simply
 # uncomment the necessary lines, leaving the $, and replace everything
 # after the equals sign..
-
-# Change basename of the VM
-# The default value is "core", which results in VMs named starting with
-# "core-01" through to "core-${num_instances}".
-$instance_name_prefix="core"
 
 # Change the version of CoreOS to be installed
 # To deploy a specific version, simply set $image_version accordingly.
@@ -76,6 +71,7 @@ $enable_serial_logging=false
 $share_home=true
 
 # Customize VMs
+$vm_name = "core-docker"
 $vm_gui = false
 $vm_memory = 1024
 $vm_cpus = 1
@@ -90,6 +86,7 @@ $shared_folders = {'./config' => '/etc/services-config', './data' => '/var/servi
 
 # Enable port forwarding from guest(s) to host machine, syntax is: { 80 => 8080 }, auto correction is enabled by default.
 #$forwarded_ports = {}
+
 
 # IP address of guest machine.
 $ip_address = "192.168.98.100"
