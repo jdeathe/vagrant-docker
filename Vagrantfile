@@ -50,6 +50,7 @@ Vagrant.configure("2") do |config|
         docker.has_ssh = containers["has_ssh"]
         docker.remains_running = containers["remains_running"]
         docker.env = {
+          SSH_SUDO: containers["ssh_sudo"],
           SSH_USER: containers["ssh_username"],
           SSH_USER_PASSWORD: containers["ssh_password"],
           SSH_USER_HOME_DIR: "/home/%s" % containers["ssh_username"]
