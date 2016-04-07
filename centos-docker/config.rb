@@ -19,7 +19,7 @@ $share_home=true
 $vm_name = "centos-docker"
 $vm_gui = false
 $vm_memory = 1024
-$vm_cpus = 1
+$vm_cpus = 2
 
 # Share additional folders to the CoreOS VMs
 # For example,
