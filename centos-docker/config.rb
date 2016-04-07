@@ -1,7 +1,7 @@
 
 # Change the CentOS 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/7
-$image_version = "1509.01"
+$image_version = "1603.01"
 
 # Enable port forwarding of Docker TCP socket
 # Set to the TCP port you want exposed on the *host* machine, default is 2375
@@ -10,7 +10,7 @@ $image_version = "1509.01"
 #   export DOCKER_HOST='tcp://127.0.0.1:2375'
 #$expose_docker_tcp=2375
 
-# Enable NFS sharing of your home directory ($HOME) to CoreOS
+# Enable NFS sharing of your home directory ($HOME) to VM
 # It will be mounted at the same path in the VM as on the host.
 # Example: /Users/foobar -> /Users/foobar
 $share_home=true
@@ -21,7 +21,7 @@ $vm_gui = false
 $vm_memory = 1024
 $vm_cpus = 2
 
-# Share additional folders to the CoreOS VMs
+# Share additional folders to the VMs
 # For example,
 # $shared_folders = {'/path/on/host' => '/path/on/guest', '/home/foo/app' => '/app'}
 # or, to map host folders to guest folders of the same name,

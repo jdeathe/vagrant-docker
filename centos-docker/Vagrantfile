@@ -8,7 +8,7 @@ Vagrant.require_version ">= 1.6.0"
 $config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
 
 # Defaults for config options
-$image_version = "1509.01"
+$image_version = "1603.01"
 $share_home = true
 $vm_name = "centos-docker"
 $vm_gui = false
@@ -86,10 +86,6 @@ Vagrant.configure(2) do |config|
 
       sudo systemctl enable docker.service
       sudo systemctl start docker.service
-
-      # Use Docker as a non-root user.
-      sudo groupadd -f docker
-      sudo usermod -aG docker vagrant
 
       # Allow docker command to be run without needing to use sudo
       echo 'alias docker="sudo /usr/bin/docker"' >> /home/vagrant/.bashrc
