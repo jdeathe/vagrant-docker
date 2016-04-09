@@ -75,12 +75,13 @@ Vagrant.configure(2) do |config|
     end
 
     $shell_script = <<-SHELL
-      # Upgrade OS packages
+      # Update system packages
       # sudo rpm-ostree upgrade
 
       # Enable TCP access to the docker service
       sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
 
+      sudo systemctl daemon-reload
       sudo systemctl restart docker.service
 
       # Allow docker command to be run without needing to use sudo
