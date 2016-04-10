@@ -1,0 +1,95 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'fileutils'
+
+Vagrant.require_version ">= 1.6.0"
+
+$config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
+
+# Defaults for config options
+$image_version = "7.20160331"
+$share_home = true
+$vm_name = "centos-atomic"
+$vm_gui = false
+$vm_memory = 1024
+$vm_cpus = 1
+$shared_folders = {}
+$forwarded_ports = {}
+$ip_address = "192.168.96.100"
+
+if File.exist?($config_path)
+  require $config_path
+end
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/atomic-host"
+  config.vm.box_url = "https://atlas.hashicorp.com/centos/boxes/atomic-host/versions/%s/providers/virtualbox.box" % $image_version
+
+  config.vm.define $vm_name do |config|
+    config.vm.hostname = $vm_name
+
+    if $expose_docker_tcp
+      config.vm.network "forwarded_port", guest: 2375, host: $expose_docker_tcp, auto_correct: true
+      config.vm.post_up_message = "You can use the docker tool locally by setting the following env var:
+  export DOCKER_HOST='tcp://127.0.0.1:%s' && unset DOCKER_TLS_VERIFY && unset DOCKER_CERT_PATH
+" % $expose_docker_tcp
+    else
+      config.vm.post_up_message = "You can use the docker tool locally by setting the following env var:
+  export DOCKER_HOST='tcp://%s:2375' && unset DOCKER_TLS_VERIFY && unset DOCKER_CERT_PATH
+" % $ip_address
+    end
+
+    # Configure SSH port forwarding to start at port 2250
+    config.vm.network "forwarded_port", guest: 22, host: 2250, id: "ssh", auto_correct: true
+
+    $forwarded_ports.each do |guest, host|
+      config.vm.network "forwarded_port", guest: guest, host: host, auto_correct: true
+    end
+
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP.
+    config.vm.network "private_network", ip: $ip_address
+
+    # Create a public network, which generally matched to bridged network.
+    # Bridged networks make the machine appear as another physical device on
+    # your network.
+    # config.vm.network "public_network"
+
+    # Disable the Rsync based directory sync
+    config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
+
+    $shared_folders.each_with_index do |(host_folder, guest_folder), index|
+      config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "shared-folder-%02d" % index, nfs: true, mount_options: ['nolock,vers=3,udp'], disabled: true
+    end
+
+    if $share_home
+      config.vm.synced_folder ENV['HOME'], ENV['HOME'], id: "home", :nfs => true, :mount_options => ['nolock,vers=3,udp'], disabled: true
+    end
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.gui = $vm_gui
+      vb.memory = $vm_memory
+      vb.cpus = $vm_cpus
+      vb.name = $vm_name
+    end
+
+    $shell_script = <<-SHELL
+      # Update system packages
+      # sudo rpm-ostree upgrade
+
+      # Enable TCP access to the docker service
+      sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
+
+      sudo systemctl daemon-reload
+      sudo systemctl restart docker.service
+
+      # Allow docker command to be run without needing to use sudo
+      echo 'alias docker="sudo /usr/bin/docker"' >> /home/vagrant/.bashrc
+    SHELL
+
+    $shell_provision_script = $shell_script % $ip_address
+
+    config.vm.provision "shell", inline: $shell_provision_script
+  end
+end
