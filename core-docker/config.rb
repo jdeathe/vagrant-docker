@@ -45,12 +45,12 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 # For example, to deploy version 709.0.0, set $image_version="709.0.0".
 # The default value is "current", which points to the current version
 # of the selected channel
-$image_version = "884.0.0"
+$image_version = "current"
 
 $image_version_minimum_required = true
 
 # Official CoreOS channel from which updates should be downloaded
-$update_channel='alpha'
+$update_channel='stable'
 
 # Log the serial consoles of CoreOS VMs to log/
 # Enable by setting value to true, disable with false
