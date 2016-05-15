@@ -78,22 +78,28 @@ Vagrant.configure(2) do |config|
       # Update system packages
       # sudo yum -y update
 
+      # Install packages
+      sudo yum -y install \
+        ntp \
+        etcd \
+        docker
+
       # Use UTC timezone
       sudo timedatectl set-timezone UTC
 
-      # Install Docker and etcd
-      sudo yum -y install etcd docker
-
       # CoreOS uses etcd2.service for etcd version 2 so alias it
-      # sudo sed -i "/^\[Install\]$/a Alias=etcd2.service" /usr/lib/systemd/system/etcd.service
+      # sudo cp /usr/lib/systemd/system/etcd.service /etc/systemd/system/
+      # sudo sed -i "/^\[Install\]$/a Alias=etcd2.service" /etc/systemd/system/etcd.service
 
       # Enable TCP access to the docker service
       sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
 
       sudo systemctl daemon-reload
-      sudo systemctl reenable -f etcd.service
-      sudo systemctl restart etcd.service
-      sudo systemctl restart docker.service
+      sudo systemctl restart ntpd
+      sudo systemctl enable ntpd
+      sudo systemctl restart etcd
+      sudo systemctl enable etcd
+      sudo systemctl restart docker
 
       # Allow docker command to be run without needing to use sudo
       echo 'alias docker="sudo /usr/bin/docker"' >> /home/vagrant/.bashrc
