@@ -80,12 +80,15 @@ Vagrant.configure(2) do |config|
 
       # Install packages
       sudo yum -y install \
-        ntp \
         etcd \
         docker
 
       # Use UTC timezone
       sudo timedatectl set-timezone UTC
+
+      # Force chrony NTP resync
+      sudo timedatectl set-ntp false
+      sudo timedatectl set-ntp true
 
       # CoreOS uses etcd2.service for etcd version 2 so alias it
       # sudo cp /usr/lib/systemd/system/etcd.service /etc/systemd/system/
@@ -95,8 +98,6 @@ Vagrant.configure(2) do |config|
       sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
 
       sudo systemctl daemon-reload
-      sudo systemctl restart ntpd
-      sudo systemctl enable ntpd
       sudo systemctl restart etcd
       sudo systemctl enable etcd
       sudo systemctl restart docker
