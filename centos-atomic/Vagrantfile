@@ -78,11 +78,18 @@ Vagrant.configure(2) do |config|
       # Update system packages
       # sudo rpm-ostree upgrade
 
+      # Use UTC timezone
+      sudo timedatectl set-timezone UTC
+
+      # Force chrony NTP resync
+      sudo timedatectl set-ntp false
+      sudo timedatectl set-ntp true
+
       # Enable TCP access to the docker service
       sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
 
       sudo systemctl daemon-reload
-      sudo systemctl restart docker.service
+      sudo systemctl restart docker
 
       # Allow docker command to be run without needing to use sudo
       echo 'alias docker="sudo /usr/bin/docker"' >> /home/vagrant/.bashrc
