@@ -1,6 +1,45 @@
 #cloud-config
 
 ---
+write_files:
+  - path: "/etc/systemd/system/hosts.service"
+    permissions: "0644"
+    owner: "root"
+    content: |-
+      [Unit]
+      Description=Hosts Updater
+      After=etcd2.service
+      Requires=etcd2.service
+
+      [Service]
+      TimeoutStartSec=0
+      EnvironmentFile=/etc/environment
+      Restart=always
+
+      ExecStart=/usr/bin/etcdctl \
+        exec-watch \
+        --recursive \
+        /hosts \
+        -- \
+          /bin/bash -c \
+            'echo "127.0.0.1 localhost" > /etc/hosts; \
+            for HOST_NAME in $(/usr/bin/sed s~/hosts/~~g <<< $(/usr/bin/etcdctl ls /hosts)); do \
+              echo $(/usr/bin/etcdctl get /hosts/$HOST_NAME/private-ipv4) $HOST_NAME; \
+            done >> /etc/hosts'
+
+      ExecStartPost=/usr/bin/etcdctl set \
+        /hosts/%H/private-ipv4 \
+        ${COREOS_PRIVATE_IPV4}
+
+      ExecStartPost=/usr/bin/etcdctl set \
+        /hosts/%H/public-ipv4 \
+        ${COREOS_PUBLIC_IPV4}
+
+      ExecStop=/usr/bin/etcdctl rm \
+        /hosts/%H --recursive
+
+      [X-Fleet]
+      Global=true
 coreos:
   update:
     reboot-strategy: 'off'
@@ -21,6 +60,9 @@ coreos:
       command: start
     - name: fleet.service
       command: start
+    - name: hosts.service
+      command: start
+      enable: true
     - name: docker-tcp.socket
       command: start
       enable: true
