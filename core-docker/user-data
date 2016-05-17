@@ -5,14 +5,13 @@ write_files:
   - path: "/etc/systemd/system/hosts.service"
     permissions: "0644"
     owner: "root"
-    content: |-
+    content: |
       [Unit]
       Description=Hosts Updater
       After=etcd2.service
       Requires=etcd2.service
 
       [Service]
-      TimeoutStartSec=0
       EnvironmentFile=/etc/environment
       Restart=always
 
@@ -42,33 +41,36 @@ write_files:
       Global=true
 coreos:
   update:
-    reboot-strategy: 'off'
+    reboot-strategy: "off"
   etcd2:
-    name: core-docker
-    initial-cluster-token: core-docker-token
-    initial-cluster: core-docker=http://$private_ipv4:2380
-    initial-cluster-state: new
-    initial-advertise-peer-urls: http://$private_ipv4:2380
-    advertise-client-urls: http://$private_ipv4:2379
-    listen-client-urls: http://$private_ipv4:2379,http://127.0.0.1:2379
-    listen-peer-urls: http://$private_ipv4:2380
+    name: "core-docker"
+    initial-cluster-token: "core-docker-token"
+    initial-cluster: "core-docker=http://$private_ipv4:2380"
+    initial-cluster-state: "new"
+    initial-advertise-peer-urls: "http://$private_ipv4:2380"
+    advertise-client-urls: "http://$private_ipv4:2379"
+    listen-client-urls: "http://$private_ipv4:2379,http://127.0.0.1:2379"
+    listen-peer-urls: "http://$private_ipv4:2380"
     #discovery: https://discovery.etcd.io/<token>
   fleet:
-    public-ip: $public_ipv4
+    public-ip: "$public_ipv4"
   units:
-    - name: etcd.service
+    - name: "locksmithd.service"
+      command: "stop"
       mask: true
-    - name: etcd2.service
-      command: start
-    - name: fleet.service
-      command: start
-    - name: hosts.service
-      command: start
+    - name: "etcd.service"
+      mask: true
+    - name: "etcd2.service"
+      command: "start"
+    - name: "fleet.service"
+      command: "start"
+    - name: "hosts.service"
+      command: "start"
       enable: true
-    - name: docker-tcp.socket
-      command: start
+    - name: "docker-tcp.socket"
+      command: "start"
       enable: true
-      content: |-
+      content: |
         [Unit]
         Description=Docker Socket for the API
 
