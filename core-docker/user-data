@@ -56,6 +56,8 @@ coreos:
   fleet:
     public-ip: $public_ipv4
   units:
+    - name: etcd.service
+      mask: true
     - name: etcd2.service
       command: start
     - name: fleet.service
