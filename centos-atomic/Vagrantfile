@@ -96,7 +96,6 @@ Vagrant.configure(2) do |config|
         /etc/sysconfig/docker-storage
       sudo bash -c 'echo 'DOCKER_STORAGE_OPTIONS="--storage-driver overlay"' >> /etc/sysconfig/docker-storage'
 
-      sudo systemctl daemon-reload
       sudo systemctl restart docker
 
       # Allow docker command to be run without needing to use sudo
