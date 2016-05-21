@@ -86,7 +86,15 @@ Vagrant.configure(2) do |config|
       sudo timedatectl set-ntp true
 
       # Enable TCP access to the docker service
-      sudo sed -i "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" /etc/sysconfig/docker
+      sudo sed -i \
+        "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled=false -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" \
+        /etc/sysconfig/docker
+
+      # Use alternative to the loopback storage driver
+      sudo sed -i \
+        '/DOCKER_STORAGE_OPTIONS=.*$/ { $!N; d; }' \
+        /etc/sysconfig/docker-storage
+      sudo bash -c 'echo 'DOCKER_STORAGE_OPTIONS="--storage-driver overlay"' >> /etc/sysconfig/docker-storage'
 
       sudo systemctl daemon-reload
       sudo systemctl restart docker
