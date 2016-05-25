@@ -76,12 +76,12 @@ Vagrant.configure(2) do |config|
     end
 
     if File.exist?($cloud_config_path)
-      config.vm.provision "file", source: => "#{$cloud_config_path}", destination: => "/tmp/user-data"
-      config.vm.provision "shell", inline: => "yum -y install cloud-init"
-      config.vm.provision "shell", inline: => "mkdir -p /var/lib/cloud/seed/nocloud-net"
-      config.vm.provision "shell", inline: => "echo 'instance-id: #{$vm_name}' > /var/lib/cloud/seed/nocloud-net/meta-data"
-      config.vm.provision "shell", inline: => "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
-      config.vm.provision "shell", inline: => "systemctl restart --no-block cloud-config.service cloud-final.service"
+      config.vm.provision "file", source: "#{$cloud_config_path}", destination: "/tmp/user-data"
+      config.vm.provision "shell", inline: "yum -y install cloud-init"
+      config.vm.provision "shell", inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
+      config.vm.provision "shell", inline: "echo 'instance-id: #{$vm_name}' > /var/lib/cloud/seed/nocloud-net/meta-data"
+      config.vm.provision "shell", inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
+      config.vm.provision "shell", inline: "systemctl restart --no-block cloud-config.service cloud-final.service"
     end
   end
 end
