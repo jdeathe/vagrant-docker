@@ -2,6 +2,11 @@
 
 ---
 write_files:
+  - path: "/etc/profile.d/ls.sh"
+    permissions: "0644"
+    owner: "root"
+    content: |
+      alias ll="ls -l"
   - path: "/etc/systemd/system/hosts.service"
     permissions: "0644"
     owner: "root"
