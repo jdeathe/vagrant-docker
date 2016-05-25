@@ -1,0 +1,19 @@
+#cloud-config
+
+---
+packages:
+  - chrony
+  - etcd
+  - docker
+runcmd:
+  - [ timedatectl, set-timezone, UTC ]
+  - [ timedatectl, set-ntp, false ]
+  - [ timedatectl, set-ntp, true ]
+  - "sed -i \"s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled=false -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~g\" /etc/sysconfig/docker"
+  - "sudo sed -i '/STORAGE_DRIVER=.*$/ { $!N; d; }' /etc/sysconfig/docker-storage-setup"
+  - "sudo echo 'STORAGE_DRIVER=overlay' >> /etc/sysconfig/docker-storage-setup"
+  - "echo 'alias docker=\"sudo /usr/bin/docker\"' >> /home/vagrant/.bashrc"
+  - [ systemctl, enable -f, etcd.service ]
+  - [ systemctl, start, --no-block, etcd.service ]
+  - [ systemctl, enable -f, docker.service ]
+  - [ systemctl, start, --no-block, docker.service ]
