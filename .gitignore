@@ -1,2 +1,3 @@
 .vagrant/
-*/packages/jdeathe/
+.packages/
+*/packages/
