@@ -81,7 +81,15 @@ Vagrant.configure(2) do |config|
       config.vm.provision "shell", name: "Make cloud-init datastore directory", inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
       config.vm.provision "shell", name: "Populate cloud-init meta-data", inline: "echo 'instance-id: #{$vm_name}' > /var/lib/cloud/seed/nocloud-net/meta-data"
       config.vm.provision "shell", name: "Populate cloud-init user-data", inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
-      config.vm.provision "shell", name: "Execute cloud-init modules config and final", inline: "systemctl restart --no-block cloud-config.service cloud-final.service"
+      config.vm.provision "shell", name: "Apply the settings specified in cloud-config", inline: "systemctl restart cloud-config.service"
+      config.vm.provision "shell", name: "Execute cloud user/final scripts", inline: "systemctl restart --no-block cloud-final.service"
+
+      if %w(ssh ssh-config).include? ARGV[0]
+        config.ssh.username = "centos"
+        # if File.exist?(File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME']))
+        #   config.ssh.private_key_path = File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME'])
+        # end
+      end
     end
   end
 end
