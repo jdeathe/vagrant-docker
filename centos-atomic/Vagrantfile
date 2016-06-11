@@ -5,9 +5,11 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
+$cloud_config_path = File.expand_path("./user-data", File.dirname(__FILE__))
 $config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
 
 # Defaults for config options
+$clound_init_uid = 1
 $image_version = "7.20160331"
 $share_home = true
 $vm_name = "centos-atomic"
@@ -74,36 +76,27 @@ Vagrant.configure(2) do |config|
       vb.name = $vm_name
     end
 
-    $shell_script = <<-SHELL
-      # Update system packages
-      # sudo rpm-ostree upgrade
+    if File.exist?($cloud_config_path)
+      config.vm.provision "file", source: "#{$cloud_config_path}", destination: "/tmp/user-data"
+      config.vm.provision "shell", keep_color: true, name: "Make cloud-init datastore directory", inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
+      config.vm.provision "shell", keep_color: true, name: "Populate cloud-init meta-data", inline: "echo -e 'hostname: #{$vm_name}\ninstance-id: #{"%s-%s" % [$vm_name, $clound_init_uid]}' > /var/lib/cloud/seed/nocloud-net/meta-data"
+      config.vm.provision "shell", keep_color: true, name: "Populate cloud-init user-data", inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
+      config.vm.provision "shell", keep_color: true, name: "Apply the settings specified in cloud-config", inline: "systemctl restart cloud-config.service"
+      config.vm.provision "shell", keep_color: true, name: "Execute cloud user/final scripts", inline: "systemctl restart --no-block cloud-final.service"
+      config.vm.provision "shell", keep_color: true, name: "Waiting for docker activation", inline: "sleep 1; while ! systemctl -q is-active docker; do sleep 1; done"
 
-      # Use UTC timezone
-      sudo timedatectl set-timezone UTC
-
-      # Force chrony NTP resync
-      sudo timedatectl set-ntp false
-      sudo timedatectl set-ntp true
-
-      # Enable TCP access to the docker service
-      sudo sed -i \
-        "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled=false -H unix:///var/run/docker.sock -H tcp://%s:2375'~g" \
-        /etc/sysconfig/docker
-
-      # Use alternative to the loopback storage driver
-      sudo sed -i \
-        '/DOCKER_STORAGE_OPTIONS=.*$/ { $!N; d; }' \
-        /etc/sysconfig/docker-storage
-      sudo bash -c 'echo 'DOCKER_STORAGE_OPTIONS="--storage-driver overlay"' >> /etc/sysconfig/docker-storage'
-
-      sudo systemctl restart docker
-
-      # Allow docker command to be run without needing to use sudo
-      echo 'alias docker="sudo /usr/bin/docker"' >> /home/vagrant/.bashrc
-    SHELL
-
-    $shell_provision_script = $shell_script % $ip_address
-
-    config.vm.provision "shell", inline: $shell_provision_script
+      # Use the cloud-config provisioned user with vagrant ssh
+      if %w(ssh ssh-config).include? ARGV[0]
+        config.ssh.username = "centos"
+        private_key_paths = Array.new
+        if File.exist?(File.expand_path("./.vagrant/machines/%s/virtualbox/private_key" % $vm_name))
+          private_key_paths.push(File.expand_path("./.vagrant/machines/%s/virtualbox/private_key" % $vm_name))
+        end
+        if File.exist?(File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME']))
+          private_key_paths.push(File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME']))
+        end
+        config.ssh.private_key_path = private_key_paths
+      end
+    end
   end
 end

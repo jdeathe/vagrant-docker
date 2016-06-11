@@ -1,3 +1,5 @@
+# cloud-init meta-data instance-id
+$clound_init_uid = 1
 
 # Change the Atomic Host 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/atomic-host

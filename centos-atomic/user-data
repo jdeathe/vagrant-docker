@@ -1,0 +1,30 @@
+#cloud-config
+
+---
+timezone: "UTC"
+users:
+  - name: "centos"
+    lock_passwd: true
+    gecos: "Cloud User"
+    groups: [ wheel, adm, systemd-journal ]
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    shell: "/bin/bash"
+write_files:
+  - path: "/etc/profile.d/docker-alias.sh"
+    permissions: "0644"
+    owner: "root"
+    content: |
+      alias docker="sudo /usr/bin/docker"
+runcmd:
+  - [ mkdir, -m, 700, /home/centos/.ssh ]
+  - [ touch, /home/centos/.ssh/authorized_keys ]
+  - [ chown, -R, 'centos:centos', /home/centos/.ssh ]
+  - [ /bin/bash, -c, "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys" ]
+  - [ sed, -i, "s~OPTIONS='--selinux-enabled'~OPTIONS='--selinux-enabled=false -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~g", /etc/sysconfig/docker ]
+  - [ sed, -i, '/DOCKER_STORAGE_OPTIONS=.*$/ { $!N; d; }', /etc/sysconfig/docker-storage ]
+  - [ /bin/bash, -c, "echo 'DOCKER_STORAGE_OPTIONS=\"--storage-driver overlay\"' >> /etc/sysconfig/docker-storage" ]
+  - [ systemctl, restart, --no-block, docker.service ]
+  - [ systemctl, enable, -f, etcd.service ]
+  - [ systemctl, restart, --no-block, etcd.service ]
+  - [ timedatectl, set-ntp, false ]
+  - [ timedatectl, set-ntp, true ]
