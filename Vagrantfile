@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
           SSH_SUDO: containers["ssh_sudo"],
           SSH_USER: containers["ssh_username"],
           SSH_USER_PASSWORD: containers["ssh_password"],
-          SSH_USER_HOME_DIR: "/home/%s" % containers["ssh_username"]
+          SSH_USER_HOME: "/home/%s" % containers["ssh_username"]
         }
       end
 
