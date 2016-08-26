@@ -10,7 +10,7 @@ $config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
 
 # Defaults for config options
 $clound_init_uid = 1
-$image_version = "7.20160630"
+$image_version = "7.20160730"
 $share_home = true
 $vm_name = "centos-atomic"
 $vm_gui = false
