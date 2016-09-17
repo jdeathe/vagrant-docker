@@ -1,5 +1,5 @@
 # cloud-init meta-data instance-id
-$clound_init_uid = 1
+$cloudinit_uid = 1
 
 # Change the CentOS 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/7
@@ -15,7 +15,7 @@ $image_version = "1608.02"
 # Enable NFS sharing of your home directory ($HOME) to VM
 # It will be mounted at the same path in the VM as on the host.
 # Example: /Users/foobar -> /Users/foobar
-$share_home=true
+$share_home = true
 
 # Customize VMs
 $vm_name = "centos-docker"
