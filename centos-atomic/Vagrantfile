@@ -30,7 +30,7 @@ end
 
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/atomic-host"
-  config.vm.box_url = "https://atlas.hashicorp.com/centos/boxes/atomic-host/versions/%s/providers/virtualbox.box" % $image_version
+  config.vm.box_version = "= %s" % $image_version
 
   config.vm.define $vm_name do |config|
     config.vm.hostname = $vm_name
