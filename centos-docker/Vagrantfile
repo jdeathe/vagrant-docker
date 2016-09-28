@@ -10,7 +10,7 @@ $config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
 
 # Defaults for config options
 $cloudinit_uid = 1
-$image_version = "1608.02"
+$image_version = "7.2.0"
 $share_home = true
 $vm_name = "centos-docker"
 $vm_gui = false
@@ -25,8 +25,8 @@ if File.exist?($config_path)
 end
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "centos/7"
-  config.vm.box_url = "https://atlas.hashicorp.com/centos/boxes/7/versions/%s/providers/virtualbox.box" % $image_version
+  config.vm.box = "jdeathe/centos-7-x86_64-minimal-en_us"
+  config.vm.box_version = "= %s" % $image_version
 
   config.vm.define $vm_name do |config|
     config.vm.hostname = $vm_name
@@ -58,9 +58,6 @@ Vagrant.configure(2) do |config|
     # your network.
     # config.vm.network "public_network"
 
-    # Disable the Rsync based directory sync
-    config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
-
     $shared_folders.each_with_index do |(host_folder, guest_folder), index|
       config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "shared-folder-%02d" % index, :nfs => true, :mount_options => ["nolock","vers=3","udp"]
     end
@@ -82,9 +79,9 @@ Vagrant.configure(2) do |config|
       config.vm.provision "shell", keep_color: true, name: "Make cloud-init datastore directory", inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
       config.vm.provision "shell", keep_color: true, name: "Populate cloud-init meta-data", inline: "echo -e 'hostname: #{$vm_name}\ninstance-id: #{"%s-%s" % [$vm_name, $cloudinit_uid]}' > /var/lib/cloud/seed/nocloud-net/meta-data"
       config.vm.provision "shell", keep_color: true, name: "Populate cloud-init user-data", inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
-      config.vm.provision "shell", keep_color: true, name: "Apply the settings specified in cloud-config", inline: "systemctl restart cloud-config.service"
+      config.vm.provision "shell", keep_color: true, name: "Apply the settings specified in cloud-config", inline: "systemctl restart cloud-config.service || true"
       config.vm.provision "shell", keep_color: true, name: "Execute cloud user/final scripts", inline: "systemctl restart --no-block cloud-final.service"
-      config.vm.provision "shell", keep_color: true, name: "Waiting for docker activation", inline: "while true; do sleep 1; [[ ! systemctl -q is-active docker ]] || break; done"
+      config.vm.provision "shell", keep_color: true, name: "Waiting for docker activation", inline: "sleep 1; while ! systemctl -q is-active docker; do sleep 1; done"
 
       # Use the cloud-config provisioned user with vagrant ssh
       if %w(ssh ssh-config).include? ARGV[0]

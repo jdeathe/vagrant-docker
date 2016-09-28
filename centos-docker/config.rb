@@ -3,7 +3,7 @@ $cloudinit_uid = 1
 
 # Change the CentOS 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/7
-$image_version = "1608.02"
+$image_version = "7.2.0"
 
 # Enable port forwarding of Docker TCP socket
 # Set to the TCP port you want exposed on the *host* machine, default is 2375
