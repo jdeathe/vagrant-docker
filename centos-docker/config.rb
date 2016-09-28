@@ -1,5 +1,3 @@
-# cloud-init meta-data instance-id
-$cloudinit_uid = 1
 
 # Change the CentOS 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/7
