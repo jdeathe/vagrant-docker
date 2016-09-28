@@ -8,6 +8,8 @@ users:
     gecos: "Cloud User"
     groups: [ wheel, adm, systemd-journal ]
     sudo: "ALL=(ALL) NOPASSWD:ALL"
+    ssh-authorized-keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key"
     shell: "/bin/bash"
 write_files:
   - path: "/etc/profile.d/docker-alias.sh"
@@ -21,10 +23,6 @@ packages:
   - etcd
   - yum-plugin-ovl
 runcmd:
-  - [ mkdir, -m, 700, /home/centos/.ssh ]
-  - [ touch, /home/centos/.ssh/authorized_keys ]
-  - [ chown, -R, 'centos:centos', /home/centos/.ssh ]
-  - [ /bin/bash, -c, "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys" ]
   - [ sed, -i, "s~OPTIONS='--selinux-enabled --log-driver=journald'~OPTIONS='--selinux-enabled=false --log-driver=journald -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~", /etc/sysconfig/docker ]
   - [ sed, -i, '/STORAGE_DRIVER=.*$/ { $!N; d; }', /etc/sysconfig/docker-storage-setup ]
   - [ /bin/bash, -c, "echo 'STORAGE_DRIVER=overlay' >> /etc/sysconfig/docker-storage-setup" ]
