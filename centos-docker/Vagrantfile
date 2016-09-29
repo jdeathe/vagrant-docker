@@ -6,11 +6,19 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
-$cloud_config_path = File.expand_path("./user-data", File.dirname(__FILE__))
-$config_path = File.expand_path("./config.rb", File.dirname(__FILE__))
+$cloud_config_path = File.expand_path(
+  "./user-data",
+  File.dirname(__FILE__)
+)
+$config_path = File.expand_path(
+  "./config.rb",
+  File.dirname(__FILE__)
+)
 
 # Create a hash of the user-data file so changes result in a new instance-id
-$cloud_config_hash = Digest::SHA1.file($cloud_config_path).hexdigest
+$cloud_config_hash = Digest::SHA1.file(
+  $cloud_config_path
+).hexdigest
 $cloudinit_uid = $cloud_config_hash[0,12]
 
 # Defaults for config options
@@ -36,7 +44,10 @@ Vagrant.configure(2) do |config|
     config.vm.hostname = $vm_name
 
     if $expose_docker_tcp
-      config.vm.network "forwarded_port", guest: 2375, host: $expose_docker_tcp, auto_correct: true
+      config.vm.network "forwarded_port", 
+        guest: 2375, 
+        host: $expose_docker_tcp, 
+        auto_correct: true
       config.vm.post_up_message = "You can use the docker tool locally by setting the following env var:
   export DOCKER_HOST='tcp://127.0.0.1:%s' && unset DOCKER_TLS_VERIFY && unset DOCKER_CERT_PATH
 " % $expose_docker_tcp
@@ -47,15 +58,23 @@ Vagrant.configure(2) do |config|
     end
 
     # Configure SSH port forwarding to start at port 2250
-    config.vm.network "forwarded_port", guest: 22, host: 2250, id: "ssh", auto_correct: true
+    config.vm.network "forwarded_port", 
+      guest: 22, 
+      host: 2250, 
+      id: "ssh", 
+      auto_correct: true
 
     $forwarded_ports.each do |guest, host|
-      config.vm.network "forwarded_port", guest: guest, host: host, auto_correct: true
+      config.vm.network "forwarded_port", 
+        guest: guest, 
+        host: host, 
+        auto_correct: true
     end
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    config.vm.network "private_network", ip: $ip_address
+    config.vm.network "private_network", 
+      ip: $ip_address
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
@@ -63,11 +82,17 @@ Vagrant.configure(2) do |config|
     # config.vm.network "public_network"
 
     $shared_folders.each_with_index do |(host_folder, guest_folder), index|
-      config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "shared-folder-%02d" % index, :nfs => true, :mount_options => ["nolock","vers=3","udp"]
+      config.vm.synced_folder host_folder.to_s, guest_folder.to_s, 
+        id: "shared-folder-%02d" % index, 
+        :nfs => true, 
+        :mount_options => ["nolock","vers=3","udp"]
     end
 
     if $share_home
-      config.vm.synced_folder ENV['HOME'], ENV['HOME'], id: "home", :nfs => true, :mount_options => ["nolock","vers=3","udp"]
+      config.vm.synced_folder ENV['HOME'], ENV['HOME'], 
+        id: "home", 
+        :nfs => true, 
+        :mount_options => ["nolock","vers=3","udp"]
     end
 
     config.vm.provider "virtualbox" do |vb|
@@ -78,26 +103,54 @@ Vagrant.configure(2) do |config|
     end
 
     if File.exist?($cloud_config_path)
-      config.vm.provision "file", source: "#{$cloud_config_path}", destination: "/tmp/user-data"
-      config.vm.provision "shell", keep_color: true, name: "Install cloud-init", inline: "yum -y install cloud-init"
-      config.vm.provision "shell", keep_color: true, name: "Disabling cloud-init locale module", inline: "sed -i -e 's~^\\([ ]*\\)\\(- locale\\)$~\\1#\\2~' /etc/cloud/cloud.cfg"
-      config.vm.provision "shell", keep_color: true, name: "Make cloud-init datastore directory", inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
-      config.vm.provision "shell", keep_color: true, name: "Populate cloud-init meta-data", inline: "echo -e 'hostname: #{$vm_name}\ninstance-id: #{"iid-%s" % $cloudinit_uid}' > /var/lib/cloud/seed/nocloud-net/meta-data"
-      config.vm.provision "shell", keep_color: true, name: "Populate cloud-init user-data", inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
-      config.vm.provision "shell", keep_color: true, name: "Apply the settings specified in cloud-config", inline: "systemctl restart cloud-config.service || true"
-      config.vm.provision "shell", keep_color: true, name: "Execute cloud user/final scripts", inline: "systemctl restart --no-block cloud-final.service"
-      config.vm.provision "shell", keep_color: true, name: "Replacing centos user's public key", inline: "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys"
-      config.vm.provision "shell", keep_color: true, name: "Waiting for docker activation", inline: "sleep 1; while ! systemctl -q is-active docker; do sleep 1; done"
+      config.vm.provision "file", 
+        source: "#{$cloud_config_path}", 
+        destination: "/tmp/user-data"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Install cloud-init", 
+        inline: "yum -y install cloud-init"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Disabling cloud-init locale module", 
+        inline: "sed -i -e 's~^\\([ ]*\\)\\(- locale\\)$~\\1#\\2~' /etc/cloud/cloud.cfg"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Make cloud-init datastore directory", 
+        inline: "mkdir -p /var/lib/cloud/seed/nocloud-net"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Populate cloud-init meta-data", 
+        inline: "echo -e 'hostname: #{$vm_name}\ninstance-id: #{"iid-%s" % $cloudinit_uid}' > /var/lib/cloud/seed/nocloud-net/meta-data"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Populate cloud-init user-data", 
+        inline: "mv /tmp/user-data /var/lib/cloud/seed/nocloud-net/user-data"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Apply the settings specified in cloud-config", 
+        inline: "systemctl restart cloud-config.service || true"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Execute cloud user/final scripts", 
+        inline: "systemctl restart --no-block cloud-final.service"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Replacing centos user's public key", 
+        inline: "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys"
+      config.vm.provision "shell", keep_color: true, 
+        name: "Waiting for docker activation", 
+        inline: "sleep 1; while ! systemctl -q is-active docker; do sleep 1; done"
 
       # Use the cloud-config provisioned user with vagrant ssh
       if %w(ssh ssh-config).include? ARGV[0]
         config.ssh.username = "centos"
         private_key_paths = Array.new
-        if File.exist?(File.expand_path("./.vagrant/machines/%s/virtualbox/private_key" % $vm_name))
-          private_key_paths.push(File.expand_path("./.vagrant/machines/%s/virtualbox/private_key" % $vm_name))
+        if File.exist?(File.expand_path(
+            "./.vagrant/machines/%s/virtualbox/private_key" % $vm_name
+        ))
+          private_key_paths.push(File.expand_path(
+            "./.vagrant/machines/%s/virtualbox/private_key" % $vm_name
+          ))
         end
-        if File.exist?(File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME']))
-          private_key_paths.push(File.expand_path("%s/.vagrant.d/insecure_private_key" % ENV['HOME']))
+        if File.exist?(File.expand_path(
+          "%s/.vagrant.d/insecure_private_key" % ENV['HOME']
+        ))
+          private_key_paths.push(File.expand_path(
+            "%s/.vagrant.d/insecure_private_key" % ENV['HOME']
+          ))
         end
         config.ssh.private_key_path = private_key_paths
       end
