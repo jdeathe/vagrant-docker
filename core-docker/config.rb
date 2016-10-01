@@ -47,8 +47,6 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 # of the selected channel
 $image_version = "current"
 
-$image_version_minimum_required = true
-
 # Official CoreOS channel from which updates should be downloaded
 $update_channel='stable'
 
