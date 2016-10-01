@@ -1,8 +1,8 @@
 # Size of the CoreOS cluster created by Vagrant
-$num_instances=1
+$num_instances = 1
 
 # Used to fetch a new discovery token for a cluster of size $num_instances
-$new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
+$new_discovery_url = "https://discovery.etcd.io/new?size=#{$num_instances}"
 
 # Automatically replace the discovery token on 'vagrant up'
 
@@ -48,13 +48,13 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 $image_version = "current"
 
 # Official CoreOS channel from which updates should be downloaded
-$update_channel='stable'
+$update_channel = "stable"
 
 # Log the serial consoles of CoreOS VMs to log/
 # Enable by setting value to true, disable with false
 # WARNING: Serial logging is known to result in extremely high CPU usage with
 # VirtualBox, so should only be used in debugging situations
-$enable_serial_logging=false
+$enable_serial_logging = false
 
 # Enable port forwarding of Docker TCP socket
 # Set to the TCP port you want exposed on the *host* machine, default is 2375
@@ -66,7 +66,7 @@ $enable_serial_logging=false
 # Enable NFS sharing of your home directory ($HOME) to CoreOS
 # It will be mounted at the same path in the VM as on the host.
 # Example: /Users/foobar -> /Users/foobar
-$share_home=true
+$share_home = true
 
 # Customize VMs
 $vm_name = "core-docker"
