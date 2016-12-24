@@ -15,7 +15,7 @@ $config_path = File.expand_path(
 )
 
 # Defaults for config options defined in CONFIG
-$update_channel = "alpha"
+$update_channel = "stable"
 $image_version = "current"
 $enable_serial_logging = false
 $share_home = false
