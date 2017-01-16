@@ -13,7 +13,7 @@ $config_path = File.expand_path(
 )
 $containers_config_path = File.expand_path(
   "./containers.yml",
-	File.dirname(__FILE__)
+  File.dirname(__FILE__)
 )
 
 # Defalut configuration options
@@ -25,7 +25,7 @@ end
 
 $docker_host_vm_vagrantfile = File.expand_path(
   "./%s/Vagrantfile" % $docker_host_vm_name,
-	File.dirname(__FILE__)
+  File.dirname(__FILE__)
 )
 
 if !File.exist?($containers_config_path)
