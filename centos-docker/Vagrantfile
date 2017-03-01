@@ -136,7 +136,7 @@ Vagrant.configure(2) do |config|
         inline: "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys"
       config.vm.provision "shell", keep_color: true, 
         name: "Waiting for docker activation", 
-        inline: "sleep 1; while ! systemctl -q is-active docker; do sleep 1; done"
+        inline: "sleep 1; while ! systemctl -q is-active docker-latest; do sleep 1; done"
 
       # Use the cloud-config provisioned user with vagrant ssh
       if %w(ssh ssh-config).include? ARGV[0]
