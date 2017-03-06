@@ -16,7 +16,7 @@ write_files:
     permissions: "0644"
     owner: "root"
     content: |
-      alias docker="sudo /usr/bin/docker"
+      alias docker="sudo /usr/bin/docker-latest"
 packages:
   - chrony
   - docker-latest
