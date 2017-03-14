@@ -1,7 +1,7 @@
 
 # Change the Atomic Host 7 version to be installed
 # Check the available versions at https://atlas.hashicorp.com/centos/boxes/atomic-host
-$image_version = "7.20161006"
+$image_version = "7.20170131"
 
 # Enable port forwarding of Docker TCP socket
 # Set to the TCP port you want exposed on the *host* machine, default is 2375
