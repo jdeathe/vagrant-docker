@@ -7,6 +7,19 @@ write_files:
     owner: "root"
     content: |
       alias ll="ls -l"
+  - path: "/etc/profile.d/docker-compose-alias.sh"
+    permissions: "0644"
+    owner: "root"
+    content: |
+      alias docker-compose='touch ${PWD}/.env; \
+      docker run \
+      --privileged \
+      --rm \
+      --env-file ${PWD}/.env \
+      --volume ${PWD}:/tmp/$(basename ${PWD}) \
+      --volume /var/run/docker.sock:/var/run/docker.sock \
+      --workdir /tmp/$(basename ${PWD}) \
+      docker/compose:1.11.2'
   - path: "/etc/systemd/system/hosts.service"
     permissions: "0644"
     owner: "root"

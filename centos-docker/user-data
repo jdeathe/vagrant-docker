@@ -17,6 +17,19 @@ write_files:
     owner: "root"
     content: |
       alias docker="sudo /usr/bin/docker-latest"
+  - path: "/etc/profile.d/docker-compose-alias.sh"
+    permissions: "0644"
+    owner: "root"
+    content: |
+      alias docker-compose='touch ${PWD}/.env; \
+      sudo /usr/bin/docker-latest run \
+      --privileged \
+      --rm \
+      --env-file ${PWD}/.env \
+      --volume ${PWD}:/tmp/$(basename ${PWD}) \
+      --volume /var/run/docker.sock:/var/run/docker.sock \
+      --workdir /tmp/$(basename ${PWD}) \
+      docker/compose:1.11.2'
 packages:
   - chrony
   - docker-latest
