@@ -4,7 +4,8 @@
 require 'digest/sha1'
 require 'fileutils'
 
-Vagrant.require_version ">= 1.6.0"
+# Vagrant:VirtualBox 1.8.4:5.0, 1.9.1:5.1
+Vagrant.require_version "= 1.9.1"
 
 $cloud_config_path = File.expand_path(
   "./user-data",
