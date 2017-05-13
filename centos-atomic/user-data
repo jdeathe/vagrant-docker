@@ -29,7 +29,7 @@ write_files:
       --volume ${PWD}:/tmp/$(basename ${PWD}) \
       --volume /var/run/docker.sock:/var/run/docker.sock \
       --workdir /tmp/$(basename ${PWD}) \
-      docker/compose:1.11.2'
+      docker/compose:1.13.0'
 runcmd:
   - [ sed, -i, '/DOCKERBINARY=\/usr\/bin\/docker-latest/s~^#~~g', /etc/sysconfig/docker ]
   - [ sed, -i, "s~OPTIONS='--selinux-enabled --log-driver=journald'~OPTIONS='--selinux-enabled=false --log-driver=journald -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~g", /etc/sysconfig/docker ]
