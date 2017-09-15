@@ -1,0 +1,3 @@
+# Docker Host. Default is core-docker (CoreOS)
+# String: localhost|core-docker|centos-docker|centos-atomic
+$docker_host_vm_name = "localhost"

@@ -17,23 +17,26 @@ $containers_config_path = File.expand_path(
 )
 
 # Defalut configuration options
-$docker_host_vm_name = "core-docker"
+$docker_host_vm_name = "localhost"
 
 if File.exist?($config_path)
   require $config_path
 end
 
-$docker_host_vm_vagrantfile = File.expand_path(
-  "./%s/Vagrantfile" % $docker_host_vm_name,
-  File.dirname(__FILE__)
-)
-
 if !File.exist?($containers_config_path)
   abort("Cannot find path: %s" % $containers_config_path)
 end
 
-if !File.exist?($docker_host_vm_vagrantfile)
-  abort("Cannot find path: %s" % $docker_host_vm_vagrantfile)
+$docker_host_vm_vagrantfile = ""
+if $docker_host_vm_name != "localhost"
+  $docker_host_vm_vagrantfile = File.expand_path(
+    "./%s/Vagrantfile" % $docker_host_vm_name,
+    File.dirname(__FILE__)
+  )
+
+  if !File.exist?($docker_host_vm_vagrantfile)
+    abort("Cannot find path: %s" % $docker_host_vm_vagrantfile)
+  end
 end
 
 Vagrant.configure("2") do |config|
@@ -46,10 +49,13 @@ Vagrant.configure("2") do |config|
       #   container.ssh.password = containers["ssh_password"]
       # end
 
-      container.vm.provider "docker" do |docker|
-        docker.force_host_vm = true
-        docker.vagrant_vagrantfile = $docker_host_vm_vagrantfile
+      container.vm.provider "docker" do |docker, override|
+        if $docker_host_vm_name != "localhost"
+          docker.force_host_vm = true
+          docker.vagrant_vagrantfile = $docker_host_vm_vagrantfile
+        end
         docker.vagrant_machine = $docker_host_vm_name
+
         docker.name = containers["name"]
         docker.image = containers["image"]
         docker.ports = containers["ports"]
