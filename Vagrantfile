@@ -70,6 +70,21 @@ Vagrant.configure("2") do |config|
           SSH_USER_PASSWORD: containers["ssh_password"],
           SSH_USER_HOME: "/home/%s" % containers["ssh_username"]
         }
+
+        # Work-around for endless "Warning: Connection refused. Retrying..."
+        # Attribution: 
+        #   - https://objectpartners.com/2017/08/03/test-vagrant-boxes-using-docker/
+        #   - https://gist.github.com/double16/81572c74684c18ace981c21042fbc397#file-vagrantfile-rb-L18
+        override.ssh.proxy_command = "docker run \
+          --rm \
+          --interactive \
+          --link %s \
+          alpine/socat \
+          - TCP:%s:22,retry=10,interval=1
+        " % [
+          containers["name"],
+          containers["name"]
+        ]
       end
 
       container.vm.post_up_message = "
