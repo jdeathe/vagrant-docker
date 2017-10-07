@@ -22,7 +22,7 @@ $cloud_config_hash = Digest::SHA1.file(
 $cloudinit_uid = $cloud_config_hash[0,12]
 
 # Defaults for config options
-$image_version = "7.3.0"
+$image_version = "7.4.0"
 $share_home = true
 $vm_name = "centos-docker"
 $vm_gui = false
