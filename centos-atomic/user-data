@@ -6,12 +6,24 @@ users:
   - name: "centos"
     lock_passwd: true
     gecos: "Cloud User"
-    groups: [ wheel, adm, systemd-journal ]
-    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    groups: [wheel, adm, systemd-journal]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
     ssh-authorized-keys:
       - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key"
     shell: "/bin/bash"
 write_files:
+  - path: /etc/sysconfig/docker-latest-storage
+    permissions: 0644
+    owner: root
+    content: |
+      DOCKER_STORAGE_OPTIONS="--storage-driver overlay2"
+  - path: /etc/sysconfig/docker-latest-storage-setup
+    permissions: 0644
+    owner: root
+    content: |
+      ROOT_SIZE=8G
+      STORAGE_DRIVER=overlay2
+      DOCKER_ROOT_VOLUME_SIZE=100%FREE
   - path: "/etc/profile.d/docker-alias.sh"
     permissions: "0644"
     owner: "root"
@@ -30,15 +42,17 @@ write_files:
       --volume /var/run/docker.sock:/var/run/docker.sock \
       --workdir /tmp/$(basename ${PWD}) \
       docker/compose:1.13.0'
+bootcmd:
+  # Disable ssh-authkey-fingerprints and keys-to-console as they fail
+  - [ sed, -i, -e, 's~^\([ ]*\)\(- ssh-authkey-fingerprints\)$~\1#\2~', -e, 's~^\([ ]*\)\(- keys-to-console\)$~\1#\2~', /etc/cloud/cloud.cfg ]
+  # Re-enable cloud-init logging to /var/log/cloud-init-output.log
+  - [ /bin/bash, -c, "if ! /bin/grep -q 'output: {' /etc/cloud/cloud.cfg.d/05_logging.cfg; then echo 'output: { all: \"| tee -a /var/log/cloud-init-output.log\" }' >> /etc/cloud/cloud.cfg.d/05_logging.cfg; fi" ]
 runcmd:
-  - [ sed, -r, -i, -e, 's~^(makestep )[0-9]+ [0-9]+$~\11 -1~', /etc/chrony.conf ]
-  - [ sed, -i, '/DOCKERBINARY=\/usr\/bin\/docker-latest/s~^#~~g', /etc/sysconfig/docker ]
-  - [ sed, -i, "s~OPTIONS='--selinux-enabled\\(.*\\)'~OPTIONS='--selinux-enabled=false\\1 -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~", /etc/sysconfig/docker, /etc/sysconfig/docker-latest ]
-  - [ sed, -i, '/DOCKER_STORAGE_OPTIONS=.*$/ { $!N; d; }', /etc/sysconfig/docker-storage ]
-  - [ /bin/bash, -c, "echo 'DOCKER_STORAGE_OPTIONS=\"--storage-driver overlay\"' >> /etc/sysconfig/docker-storage" ]
-  - [ systemctl, disable, --force, --now, --no-block, docker.service ]
-  - [ systemctl, enable, --force, --now, --no-block, docker-latest.service ]
-  - [ systemctl, mask, --no-block, docker.service ]
-  - [ systemctl, enable, --force, --now, --no-block, etcd.service ]
-  - [ timedatectl, set-ntp, false ]
-  - [ timedatectl, set-ntp, true ]
+  - [ sed, -r, -i, -e, 's~^(makestep )[0-9\.]+ (-)?[0-9]+$~\11 -1~', /etc/chrony.conf ]
+  - [ systemctl, restart, systemd-timedated.service ]
+  - [ sed, -i, -e, '/DOCKERBINARY=\/usr\/bin\/docker-latest/s~^#~~', -e, '/DOCKERDBINARY=\/usr\/bin\/dockerd-latest/s~^#~~', -e, '/DOCKER_CONTAINERD_BINARY=\/usr\/bin\/docker-containerd-latest/s~^#~~', -e, '/DOCKER_CONTAINERD_SHIM_BINARY=\/usr\/bin\/docker-containerd-shim-latest/s~^#~~', /etc/sysconfig/docker ]
+  - [ sed, -i, "s~OPTIONS='\\(.*\\)'~OPTIONS='\\1 -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~", /etc/sysconfig/docker, /etc/sysconfig/docker-latest ]
+  - [ systemctl, disable, --force, --now, docker.service ]
+  - [ systemctl, mask, docker.service ]
+  - [ systemctl, enable, --force, --now, docker-latest.service ]
+  - [ systemctl, enable, --force, --now, etcd.service ]

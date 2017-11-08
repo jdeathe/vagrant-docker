@@ -24,7 +24,7 @@ $cloud_config_hash = Digest::SHA1.file(
 $cloudinit_uid = $cloud_config_hash[0,12]
 
 # Defaults for config options
-$image_version = "7.20170428"
+$image_version = "1708.01"
 $share_home = true
 $vm_name = "centos-atomic"
 $vm_gui = false
@@ -138,9 +138,34 @@ Vagrant.configure(2) do |config|
       config.vm.provision "shell", keep_color: true, 
         name: "Replacing centos user's public key", 
         inline: "cat /home/vagrant/.ssh/authorized_keys > /home/centos/.ssh/authorized_keys"
+      config.vm.provision "shell", keep_color: true,
+        name: "Wait for Cloud-init boot-finished",
+        inline: "tail -f /var/log/cloud-init-output.log & \
+          CIO_PID=${!}; \
+          until [[ -e /var/lib/cloud/instance/boot-finished ]]; do \
+            sleep 1; \
+          done; \
+          kill ${CIO_PID}"
+      config.vm.provision "shell", keep_color: true,
+        name: "Cloud-init success verification",
+        inline: "if ! grep -qE \
+            '\\\"errors\\\": \\[\\]' \
+            /var/lib/cloud/data/result.json; \
+          then \
+            printf -- 'ERROR Cloud-init failed\\n%s' \
+            \"$(
+              cat /var/lib/cloud/data/result.json
+            )\" 1>&2; \
+            exit 1;
+          fi"
       config.vm.provision "shell", keep_color: true, 
         name: "Waiting for docker activation", 
-        inline: "sleep 1; while ! systemctl -q is-active docker-latest; do sleep 1; done"
+        inline: "while ! systemctl \
+            -q is-active \
+            docker-latest; \
+          do \
+            sleep 1; \
+          done"
 
       # Use the cloud-config provisioned user with vagrant ssh
       if %w(ssh ssh-config).include? ARGV[0]
