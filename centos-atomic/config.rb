@@ -13,13 +13,13 @@ $image_version = "1712.01"
 # Enable NFS sharing of your home directory ($HOME) to VM
 # It will be mounted at the same path in the VM as on the host.
 # Example: /Users/foobar -> /Users/foobar
-$share_home=false
+$share_home = false
 
 # Customize VMs
 $vm_name = "centos-atomic"
 $vm_gui = false
 $vm_memory = 1024
-$vm_cpus = 2
+$vm_cpus = 1
 
 # Share additional folders to the VM
 # For example,

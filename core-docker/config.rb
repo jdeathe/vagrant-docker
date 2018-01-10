@@ -1,44 +1,3 @@
-# Size of the CoreOS cluster created by Vagrant
-$num_instances = 1
-
-# Used to fetch a new discovery token for a cluster of size $num_instances
-$new_discovery_url = "https://discovery.etcd.io/new?size=#{$num_instances}"
-
-# Automatically replace the discovery token on 'vagrant up'
-
-# if File.exists?('user-data') && ARGV[0].eql?('up')
-#   require 'open-uri'
-#   require 'yaml'
-
-#   token = open($new_discovery_url).read
-
-#   data = YAML.load(IO.readlines('user-data')[1..-1].join)
-
-#   if data.key? 'coreos' and data['coreos'].key? 'etcd'
-#     data['coreos']['etcd']['discovery'] = token
-#   end
-
-#   if data.key? 'coreos' and data['coreos'].key? 'etcd2'
-#     data['coreos']['etcd2']['discovery'] = token
-#   end
-
-#   # Fix for YAML.load() converting reboot-strategy from 'off' to `false`
-#   if data.key? 'coreos' and data['coreos'].key? 'update' and data['coreos']['update'].key? 'reboot-strategy'
-#     if data['coreos']['update']['reboot-strategy'] == false
-#       data['coreos']['update']['reboot-strategy'] = 'off'
-#     end
-#   end
-
-#   yaml = YAML.dump(data)
-#   File.open('user-data', 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
-# end
-
-#
-# coreos-docker is configured through a series of configuration
-# options (global ruby variables) which are detailed below. To modify
-# these options, first copy this file to "config.rb". Then simply
-# uncomment the necessary lines, leaving the $, and replace everything
-# after the equals sign..
 
 # Change the version of CoreOS to be installed
 # To deploy a specific version, simply set $image_version accordingly.
@@ -72,19 +31,18 @@ $share_home = true
 $vm_name = "core-docker"
 $vm_gui = false
 $vm_memory = 1024
-$vm_cpus = 2
+$vm_cpus = 1
 
-# Share additional folders to the CoreOS VMs
+# Share additional folders to the VM
 # For example,
 # $shared_folders = {'/path/on/host' => '/path/on/guest', '/home/foo/app' => '/app'}
 # or, to map host folders to guest folders of the same name,
 # $shared_folders = Hash[*['/home/foo/app1', '/home/foo/app2'].map{|d| [d, d]}.flatten]
 #$shared_folders = {'~/services-config' => '/etc/services-config', '~/services-data' => '/var/services-data', '~/services-packages' => '/var/services-packages'}
-$shared_folders = {'./config' => '/etc/services-config', './data' => '/var/services-data', './packages' => '/var/services-packages'}
+#$shared_folders = {'./config' => '/etc/services-config', './data' => '/var/services-data', './packages' => '/var/services-packages'}
 
 # Enable port forwarding from guest(s) to host machine, syntax is: { 80 => 8080 }, auto correction is enabled by default.
 #$forwarded_ports = {}
-
 
 # IP address of guest machine.
 $ip_address = "192.168.98.100"

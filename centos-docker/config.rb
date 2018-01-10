@@ -19,15 +19,15 @@ $share_home = true
 $vm_name = "centos-docker"
 $vm_gui = false
 $vm_memory = 1024
-$vm_cpus = 2
+$vm_cpus = 1
 
-# Share additional folders to the VMs
+# Share additional folders to the VM
 # For example,
 # $shared_folders = {'/path/on/host' => '/path/on/guest', '/home/foo/app' => '/app'}
 # or, to map host folders to guest folders of the same name,
 # $shared_folders = Hash[*['/home/foo/app1', '/home/foo/app2'].map{|d| [d, d]}.flatten]
 #$shared_folders = {'~/services-config' => '/etc/services-config', '~/services-data' => '/var/services-data', '~/services-packages' => '/var/services-packages'}
-$shared_folders = {'./config' => '/etc/services-config', './data' => '/var/services-data', './packages' => '/var/services-packages'}
+#$shared_folders = {'./config' => '/etc/services-config', './data' => '/var/services-data', './packages' => '/var/services-packages'}
 
 # Enable port forwarding from guest(s) to host machine, syntax is: { 80 => 8080 }, auto correction is enabled by default.
 #$forwarded_ports = {}
