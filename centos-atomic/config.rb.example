@@ -10,11 +10,6 @@ $image_version = "1712.01"
 #   export DOCKER_HOST='tcp://127.0.0.1:2375'
 #$expose_docker_tcp=2375
 
-# Enable NFS sharing of your home directory ($HOME) to VM
-# It will be mounted at the same path in the VM as on the host.
-# Example: /Users/foobar -> /Users/foobar
-$share_home = false
-
 # Customize VMs
 $vm_name = "centos-atomic"
 $vm_gui = false
