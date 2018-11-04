@@ -1,6 +1,6 @@
 ---
 - name: centos-ssh-1
-  image: jdeathe/centos-ssh:1.8.2
+  image: jdeathe/centos-ssh:1.9.0
   ports: ["2252:22"]
   # volumes: ["/etc/services-config/centos-ssh-1:/etc/services-config"]
   remains_running: true
@@ -9,7 +9,7 @@
   ssh_username: "vagrant"
   ssh_password: "vagrant"
 - name: centos-ssh-2
-  image: jdeathe/centos-ssh:2.3.0
+  image: jdeathe/centos-ssh:2.4.0
   ports: ["2253:22"]
   # volumes: ["/etc/services-config/centos-ssh-2:/etc/services-config"]
   remains_running: true
