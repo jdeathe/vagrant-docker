@@ -48,7 +48,7 @@ bootcmd:
   # Re-enable cloud-init logging to /var/log/cloud-init-output.log
   - [ /bin/bash, -c, "if ! /bin/grep -q 'output: {' /etc/cloud/cloud.cfg.d/05_logging.cfg; then echo 'output: { all: \"| tee -a /var/log/cloud-init-output.log\" }' >> /etc/cloud/cloud.cfg.d/05_logging.cfg; fi" ]
   # Atomic Host is not intended to host NFS services - need to manually create required directories
-  - [ /bin/bash, -c, "mkdir -p /var/lib/nfs/{etab,mtab,state}" ]
+  - [ /bin/bash, -c, "mkdir -p /var/lib/nfs/mtab" ]
 runcmd:
   - [ sed, -r, -i, -e, 's~^(makestep )[0-9\.]+ (-)?[0-9]+$~\11 -1~', /etc/chrony.conf ]
   - [ systemctl, restart, systemd-timedated.service ]
