@@ -42,6 +42,9 @@ write_files:
       --volume /var/run/docker.sock:/var/run/docker.sock \
       --workdir /tmp/$(basename ${PWD}) \
       docker/compose:1.18.0'
+  - path: "/var/opt/scmi/packages/.scmi"
+    permissions: "0640"
+    owner: "root"
 bootcmd:
   # Disable ssh-authkey-fingerprints and keys-to-console as they fail
   - [ sed, -i, -e, 's~^\([ ]*\)\(- ssh-authkey-fingerprints\)$~\1#\2~', -e, 's~^\([ ]*\)\(- keys-to-console\)$~\1#\2~', /etc/cloud/cloud.cfg ]

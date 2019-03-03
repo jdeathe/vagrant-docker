@@ -57,6 +57,9 @@ write_files:
 
       [X-Fleet]
       Global=true
+  - path: "/var/opt/scmi/packages/.scmi"
+    permissions: "0640"
+    owner: "root"
 coreos:
   update:
     reboot-strategy: "off"
