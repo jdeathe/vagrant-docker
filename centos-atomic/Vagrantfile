@@ -24,7 +24,7 @@ $cloud_config_hash = Digest::SHA1.file(
 $cloudinit_uid = $cloud_config_hash[0,12]
 
 # Defaults for config options
-$image_version = "1808.01"
+$image_version = "1811.01"
 $vm_name = "centos-atomic"
 $vm_gui = false
 $vm_memory = 1024
