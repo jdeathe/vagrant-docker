@@ -54,6 +54,9 @@ bootcmd:
   - [ /bin/bash, -c, "mkdir -p /var/lib/nfs/mtab" ]
 runcmd:
   - [ sed, -r, -i, -e, 's~^(makestep )[0-9\.]+ (-)?[0-9]+$~\11 -1~', /etc/chrony.conf ]
+  - [ systemctl, disable, --force, --now, firewalld.service ]
+  - [ systemctl, mask, --no-block, firewalld.service ]
+  # - [ systemctl, enable, --force, --now, --no-block, iptables.service ]
   - [ systemctl, restart, systemd-timedated.service ]
   - [ sed, -i, -e, '/DOCKERBINARY=\/usr\/bin\/docker-latest/s~^#~~', -e, '/DOCKERDBINARY=\/usr\/bin\/dockerd-latest/s~^#~~', -e, '/DOCKER_CONTAINERD_BINARY=\/usr\/bin\/docker-containerd-latest/s~^#~~', -e, '/DOCKER_CONTAINERD_SHIM_BINARY=\/usr\/bin\/docker-containerd-shim-latest/s~^#~~', /etc/sysconfig/docker ]
   - [ sed, -i, "s~OPTIONS='\\(.*\\)'~OPTIONS='\\1 -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~", /etc/sysconfig/docker, /etc/sysconfig/docker-latest ]
