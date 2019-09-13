@@ -45,9 +45,6 @@ Vagrant.configure("2") do |config|
       container.vm.synced_folder ".", "/vagrant", disabled: true
       container.ssh.port = 22
       container.ssh.username = containers["ssh_username"]
-      # if !containers["ssh_password"].nil? && !containers["ssh_password"].empty?
-      #   container.ssh.password = containers["ssh_password"]
-      # end
 
       container.vm.provider "docker" do |docker, override|
         if $docker_host_vm_name != "localhost"
@@ -55,15 +52,17 @@ Vagrant.configure("2") do |config|
           docker.vagrant_vagrantfile = $docker_host_vm_vagrantfile
         end
         docker.vagrant_machine = $docker_host_vm_name
-
         docker.name = containers["name"]
         docker.image = containers["image"]
-        docker.ports = containers["ports"]
-        if !containers["volumes"].nil? && !containers["volumes"].empty?
-          docker.volumes = containers["volumes"]
+        if !containers["has_ssh"].nil?
+          docker.has_ssh = containers["has_ssh"]
         end
-        docker.has_ssh = containers["has_ssh"]
-        docker.remains_running = containers["remains_running"]
+        if !containers["ports"].nil?
+          docker.ports = containers["ports"]
+        end
+        if !containers["remains_running"].nil?
+          docker.remains_running = containers["remains_running"]
+        end
         docker.env = {
           SSH_SUDO: containers["ssh_sudo"],
           SSH_USER: containers["ssh_username"],

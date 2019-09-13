@@ -1,17 +1,17 @@
 ---
-- name: centos-ssh-1
-  image: jdeathe/centos-ssh:1.11.0
-  ports: ["2252:22"]
-  remains_running: true
+- name: "centos-ssh-1"
   has_ssh: true
+  image: "jdeathe/centos-ssh:1.11.0"
+  # ports: ["2252:22"]
+  remains_running: true
   ssh_sudo: "ALL=(ALL) NOPASSWD:ALL"
   ssh_username: "vagrant"
   ssh_password: "vagrant"
-- name: centos-ssh-2
-  image: jdeathe/centos-ssh:2.6.0
-  ports: ["2253:22"]
-  remains_running: true
+- name: "centos-ssh-2"
   has_ssh: true
+  image: "jdeathe/centos-ssh:2.6.0"
+  # ports: ["2253:22"]
+  remains_running: true
   ssh_sudo: "ALL=(ALL) NOPASSWD:ALL"
   ssh_username: "vagrant"
   ssh_password: "vagrant"
