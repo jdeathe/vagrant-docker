@@ -12,22 +12,36 @@ users:
       - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key"
     shell: "/bin/bash"
 write_files:
-  - path: "/etc/profile.d/docker-alias.sh"
+  - path: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
+    permissions: "0600"
+    owner: "root:root"
+    encoding: "gz+b64"
+    # curl -sLo - https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 | gzip -9 | base64
+    content: "H4sIAFxQh10CA31VR67z6AHb6xRvmcCYsaxqBfgXn3rvfaduVau3089LDhACXJHghgT411+/oDlB0n9MwfwxPVqVmB+Fi35o1WCU/6p/QX4xL/V3+M+PMGym8LO//sb+fr1+/iXo3lOth+38NwT1lqTTvLIlkkVzgHl54yc8tIkByWx64jNeDH7pkrRwfQMZ2RaPBoMiysdcxTR5gpmGDKewWpKm4Hpy5Df+zEjEAANmhNHuEmhVMkU4yguukUUftuaiW0HgNBtFdcEDTI7eQ00UfHq7U22hgw2DrKSjIUkil8I903S+ux2zgWEdOcHUaGnTDT4yIEkKOLyaCH+cTGjnQ/8qZz95bkn3rVi/L4kPsmJ2Ptbl9J5ccRF5Dz1H5n64xDMXAkWwMCS2SjdRB1aDGvcLlj6CwVXsrZSGRB376y3syRCNZhYEWAjbrJmNU8nrcUtg6Clh3RI/IoSbqWjDIef5PuHueqx9L33bhIOPI829jcTgyI0bpljmbxTUdoXfm4WcpXLKXx/nHtznsUaHwMrQQIhl8LGrYctt+9g3GcPvNfJXZeuU421ZY444bjBnlsXKiR30g/b9hk8TuG7D0NxJQ1Te3uibnbe9JaVW1NZFmroWGJaWL+ErR93vTtAcErKNJMA3f6r5Jgupf2RPYpYyCodcGMcblOBuWJybMx9dwTDE0540Be+psuPT5DxXdnDIgySD6Q5IseFnFvYL90T2oWkgYco+ImeNJTvyxp2+VZf/VFGdX7bulZ0VoXigGreq+4/RRwsLlavXy+OPonN0dSqtEtp4W8ged3a0eiN+8Mvce+qb2y9aKieZWBTBFNLV1MMvydmafY3BZd/wXcPrAWxgARpamY8QB/ae9Vxl+zTvMuCrX21lCv4RByeIe79NUfmTifKe9H6TM/ivN3vUloTRtEZDoAI1bcnO3Ncc+CwmXS0yAzIWVJHPAElmqoXjK4kFllT8MqwAUBibnlSCqHXnbCE8KwX2iS3jNC5us7IaOY3XqqiiMm/xum9BPa24Xe4udRyU4Hm8FmNxLITY4IUVRk1QfbJqcgX2O8+F54K3l1GjDLyFT6Ie7iS67OpBf0g4nSfFU14Y/6Ln2awRqkiUUngIG6Txa5jTApKQxmr2B3ptSj9R3PjbPtybBIcrTr47tjPJwSpkgDhs53mwdyhzujjicwFR0tKjTHTl4wULqg3w44uVJo1vau59VM5j9w+iKM9nqTVNgn5h9eHo91uHEza+BhycEONRNo1yYuYWGV99L3zr7Yai6HguUvulGw+soud6l8p8Z7FS1kudFsPj44gUYARG3yFxCP1GtHiqFgMwKq0tFZ83PyMDnq+lzPGkw4VvIQ1JPl2CL0K1oTb7lT6J+sUO5e8O/K+5pZWVr3Ist34M2kScte0NrvVwCcTCCn3qZemVBGls6RLeBNGUEbayMQrx5KnfFtYP71KVbLzIx2VvKuHtyHOvbt9+2UJ++KpydF4jmKCJym5krCPQAHDOeqc284pMMYO42ZlTW4CPRiqBje7b8jIc40TPWIzHkC97y11Yk/xNNNTbp942Kh88OGXseU6FoWPQzpi8RxiLi3aB9T7IusO/n4jCj35rypno2jfVcrecG+6dDSRLp968oShjaYISo9y+QnazMCTPpir8IqfTecQ+eIpCe5X1hmVj5b99b0inDi9A/HipHcEef/5Afz65mUD/+w5OZ//PsfwDIDTlCX4GAAA="
+  - path: "/etc/yum/pluginconf.d/fastestmirror.conf"
     permissions: "0644"
-    owner: "root"
+    owner: "root:root"
     content: |
-      alias docker="sudo /usr/bin/docker-latest"
-  - path: "/etc/profile.d/docker-compose-alias.sh"
-    permissions: "0644"
-    owner: "root"
-    content: |
-      alias docker-compose="sudo /usr/bin/docker-compose"
+      [main]
+      enabled=0
+      verbose=0
+      always_print_best_host = true
+      socket_timeout=3
+      hostfilepath=timedhosts.txt
+      maxhostfileage=10
+      maxthreads=15
   - path: "/var/opt/scmi/packages/.scmi"
     permissions: "0640"
     owner: "root"
-bootcmd:
-  - [ sed, -i, -e, 's~^enabled=1~enabled=0~', /etc/yum/pluginconf.d/fastestmirror.conf ]
-  - [ /bin/bash, -c, "rpm -q --quiet epel-release || yum -y install epel-release" ]
+yum_repos:
+  epel:
+    name: "Extra Packages for Enterprise Linux 7 - $basearch"
+    baseurl: "http://download.fedoraproject.org/pub/epel/7/$basearch"
+    metalink: "https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch"
+    failovermethod: "priority"
+    enabled: true
+    gpgcheck: true
+    gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
 packages:
   - chrony
   - docker-compose
@@ -39,7 +53,7 @@ runcmd:
   - [ sed, -r, -i, -e, 's~^(makestep )[0-9\.]+ (-)?[0-9]+$~\11 -1~', /etc/chrony.conf ]
   - [ systemctl, disable, --force, --now, firewalld.service ]
   - [ systemctl, mask, --no-block, firewalld.service ]
-  # - [ systemctl, enable, --force, --now, --no-block, iptables.service ]
+  - [ systemctl, enable, --force, --now, --no-block, iptables.service ]
   - [ sed, -i, '/DOCKERBINARY=\/usr\/bin\/docker-latest/s~^#~~g', /etc/sysconfig/docker ]
   - [ sed, -i, "s~OPTIONS='--selinux-enabled\\(.*\\)'~OPTIONS='--selinux-enabled=false\\1 -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375'~", /etc/sysconfig/docker, /etc/sysconfig/docker-latest ]
   - [ sed, -i, '/STORAGE_DRIVER=.*$/ { $!N; d; }', /etc/sysconfig/docker-latest-storage-setup ]
